@@ -106,7 +106,7 @@ gulp.task('publish', function() {
 		return;
 	}
 
-	var publishDst = '../../public/';
+	var publishDst = '../ide_kenrobot/public/';
 	gulp.src('./dist.crx')
 		.pipe(rename('KenExt.crx'))
 		.pipe(gulp.dest(publishDst + "download/"));
