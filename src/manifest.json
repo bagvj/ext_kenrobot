@@ -20,5 +20,5 @@
   		"matches": ["*://*.kenrobot.com/*"]
 	},
 	"update_url": "http://ide.kenrobot.com/extension-update.xml",
-	"version": "1.0.1"
+	"version": "1.0.2"
 }
