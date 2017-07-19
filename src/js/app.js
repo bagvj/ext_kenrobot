@@ -115,8 +115,14 @@ define(['jquery', './encoding', './upload'], function($, _, upload) {
 				sendResponse(false);
 				return;
 			}
-			var bytes = encoder.encode(message.data);
-			chrome.serial.send(connectionId, bytes.buffer, function(sendInfo) {
+			var buffer
+			if(message.raw) {
+				buffer = bytes2Buffer(message.data);
+			} else {
+				var bytes = encoder.encode(message.data);
+				buffer = bytes.buffer;
+			}
+			chrome.serial.send(connectionId, buffer, function(sendInfo) {
 				sendResponse(sendInfo);
 			});
 			return true;
@@ -175,12 +181,12 @@ define(['jquery', './encoding', './upload'], function($, _, upload) {
 	}
 
 	function onReceiveError(info) {
-		connectionId = null;
 		uploadProgress = 0;
 		serialDatas = [];
 
 		try {
 			chrome.serial.disconnect(connectionId, function() {});
+			connectionId = null;
 		} catch (ex) {
 
 		}
@@ -202,6 +208,15 @@ define(['jquery', './encoding', './upload'], function($, _, upload) {
 			bytes[i] = str.charCodeAt(i);
 		}
 		return bytes.buffer;
+	}
+
+	function bytes2Buffer(bytes) {
+		var dataView = new DataView(new ArrayBuffer(bytes.length))
+		for(var i = 0; i < bytes.length; i++) {
+			dataView.setUint8(i, bytes[i]);
+		}
+
+		return dataView.buffer;
 	}
 
 	function send(message, callback) {
